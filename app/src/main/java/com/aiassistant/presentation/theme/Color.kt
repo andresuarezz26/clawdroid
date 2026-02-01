@@ -1,4 +1,4 @@
-package com.aiassistant.ui.theme
+package com.aiassistant.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
