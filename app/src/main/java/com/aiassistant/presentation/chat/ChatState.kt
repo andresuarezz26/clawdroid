@@ -1,6 +1,6 @@
-package com.aiassistant.presentation.home
+package com.aiassistant.presentation.chat
 
-data class HomeState(
+data class ChatState(
   val isLoading: Boolean = false,
   val messages: List<String> = listOf(),
   val inputText: String = "",

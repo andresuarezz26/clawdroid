@@ -1,4 +1,4 @@
-package com.aiassistant.presentation.home
+package com.aiassistant.presentation.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,15 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun ChatScreen(viewModel: ChatViewModel = hiltViewModel()) {
 
   val state = viewModel.state.collectAsState().value
 
   HomeScreenContent(
     state.inputText,
     state.isExecuting,
-    { newText -> viewModel.processIntent(HomeIntent.UpdateInput(newText)) },
-    { viewModel.processIntent(HomeIntent.RunCommand) })
+    { newText -> viewModel.processIntent(ChatIntent.UpdateInput(newText)) },
+    { viewModel.processIntent(ChatIntent.RunCommand) })
 }
 
 @Composable

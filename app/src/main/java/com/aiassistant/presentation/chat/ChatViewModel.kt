@@ -1,4 +1,4 @@
-package com.aiassistant.presentation.home
+package com.aiassistant.presentation.chat
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,20 +9,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
+class ChatViewModel @Inject constructor() : ViewModel() {
 
-  private val _state = MutableStateFlow(HomeState())
-  val state: StateFlow<HomeState> = _state.asStateFlow()
+  private val _state = MutableStateFlow(ChatState())
+  val state: StateFlow<ChatState> = _state.asStateFlow()
 
-  fun processIntent(intent: HomeIntent) {
+  fun processIntent(intent: ChatIntent) {
     when (intent) {
-      is HomeIntent.UpdateInput -> {
+      is ChatIntent.UpdateInput -> {
         _state.update {
           it.copy(inputText = intent.input)
         }
         // Handle load data intent
       }
-      HomeIntent.RunCommand -> {
+      ChatIntent.RunCommand -> {
 
       }
     }

@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">Clawdroid</string>
+  <string name="accessibility_description">accesibility service</string>
 </resources>
