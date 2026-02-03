@@ -7,6 +7,7 @@ data class ChatState(
     val inputText: String = "",
     val isExecuting: Boolean = false,
     val currentStep: String = "",
+    val currentTool: String? = null,
     val stepCount: Int = 0,
     val isServiceConnected: Boolean = false
 )

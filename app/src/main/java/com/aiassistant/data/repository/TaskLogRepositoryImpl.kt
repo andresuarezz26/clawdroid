@@ -2,7 +2,6 @@ package com.aiassistant.data.repository
 
 import com.aiassistant.data.local.dao.TaskLogDao
 import com.aiassistant.data.local.entity.TaskLogEntity
-import com.aiassistant.domain.model.StepResult
 import com.aiassistant.domain.model.TaskLog
 import com.aiassistant.domain.model.TaskResult
 import com.aiassistant.domain.repository.TaskLogRepository
@@ -16,7 +15,7 @@ class TaskLogRepositoryImpl @Inject constructor(
     private val taskLogDao: TaskLogDao
 ) : TaskLogRepository {
 
-    override suspend fun saveLog(command: String, result: TaskResult, steps: List<StepResult>) {
+    override suspend fun saveLog(command: String, result: TaskResult, stepsUsed: Int) {
         val entity = TaskLogEntity(
             command = command,
             resultType = when (result) {
@@ -30,7 +29,7 @@ class TaskLogRepositoryImpl @Inject constructor(
                 is TaskResult.Failed -> result.reason
                 else -> result.toString()
             },
-            stepsUsed = steps.size,
+            stepsUsed = stepsUsed,
             timestamp = System.currentTimeMillis()
         )
         taskLogDao.insert(entity)

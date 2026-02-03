@@ -5,11 +5,9 @@ import androidx.room.Room
 import com.aiassistant.data.local.AppDatabase
 import com.aiassistant.data.local.dao.TaskLogDao
 import com.aiassistant.data.repository.AppRepositoryImpl
-import com.aiassistant.data.repository.LlmRepositoryImpl
 import com.aiassistant.data.repository.ScreenRepositoryImpl
 import com.aiassistant.data.repository.TaskLogRepositoryImpl
 import com.aiassistant.domain.repository.AppRepository
-import com.aiassistant.domain.repository.LlmRepository
 import com.aiassistant.domain.repository.ScreenRepository
 import com.aiassistant.domain.repository.TaskLogRepository
 import dagger.Binds
@@ -27,10 +25,6 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindScreenRepository(impl: ScreenRepositoryImpl): ScreenRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindLlmRepository(impl: LlmRepositoryImpl): LlmRepository
 
     @Binds
     @Singleton

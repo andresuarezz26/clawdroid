@@ -9,7 +9,8 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.11.0"
 composeBom = "2024.09.00"
 navigationComposeVersion = "2.9.6"
-serialization = "1.8.0"
+serialization = "1.8.1"
+koog = "0.6.1"
 hiltNavigationCompose = "1.2.0"
 retrofitVersion = "3.0.0"
 loggingInterceptorVersion = "5.0.0"
@@ -22,7 +23,7 @@ mockitoKotlinKotlinVersion ="6.1.0"
 androidxCoreTestingVersion ="2.2.0"
 appcompat = "1.7.1"
 material = "1.13.0"
-ktor = "2.3.7"
+ktor = "3.2.3"
 securityCrypto = "1.1.0-alpha06"
 
 [libraries]
@@ -75,6 +76,8 @@ ktor-serialization = { group = "io.ktor", name = "ktor-serialization-kotlinx-jso
 androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
 # Arch components core testing
 androidx-core-testing = {group = "androidx.arch.core", name = "core-testing", version.ref = "androidxCoreTestingVersion"}
+# Koog AI
+koog-agents = { group = "ai.koog", name = "koog-agents", version.ref = "koog" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 

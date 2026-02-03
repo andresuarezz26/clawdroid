@@ -50,6 +50,23 @@ android {
     compose = true
     buildConfig = true
   }
+  packaging {
+    resources {
+      excludes += listOf(
+        "META-INF/INDEX.LIST",
+        "META-INF/io.netty.versions.properties",
+        "META-INF/DEPENDENCIES",
+        "META-INF/LICENSE",
+        "META-INF/LICENSE.txt",
+        "META-INF/license.txt",
+        "META-INF/NOTICE",
+        "META-INF/NOTICE.txt",
+        "META-INF/notice.txt",
+        "META-INF/ASL2.0",
+        "META-INF/*.kotlin_module"
+      )
+    }
+  }
 }
 
 dependencies {
@@ -108,6 +125,9 @@ dependencies {
   implementation(libs.room.ktx)
   ksp(libs.room.compiler)
   testImplementation(libs.room.testing)
+
+  // Koog AI
+  implementation(libs.koog.agents)
 
   // Security
   implementation(libs.androidx.security.crypto)
