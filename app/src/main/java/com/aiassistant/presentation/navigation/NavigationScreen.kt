@@ -6,4 +6,7 @@ sealed class NavigationScreen {
 
   @Serializable
   object Main: NavigationScreen()
+
+  @Serializable
+  object TelegramSettings: NavigationScreen()
 }
