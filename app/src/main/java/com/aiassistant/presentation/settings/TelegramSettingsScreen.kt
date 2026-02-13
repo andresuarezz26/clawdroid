@@ -1,7 +1,9 @@
 package com.aiassistant.presentation.settings
 
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,6 +49,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +66,10 @@ fun TelegramSettingsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var showToken by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.processIntent(TelegramSettingsIntent.CheckNotificationListenerStatus)
+    }
 
     LaunchedEffect(state.validationResult) {
         when (val result = state.validationResult) {
@@ -221,6 +230,90 @@ fun TelegramSettingsScreen(
                                 onCheckedChange = { viewModel.processIntent(TelegramSettingsIntent.ToggleBot) },
                                 enabled = state.isTokenSet
                             )
+                        }
+                    }
+                }
+            }
+
+            // Notification Listener Section
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Notification Listener",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(8.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (state.isNotificationListenerEnabled)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.error
+                                    )
+                            )
+                            Text(
+                                text = if (state.isNotificationListenerEnabled) "Connected" else "Not connected",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (state.isNotificationListenerEnabled)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    MaterialTheme.colorScheme.error
+                            )
+                        }
+
+                        if (!state.isNotificationListenerEnabled) {
+                            Text(
+                                text = "Grant notification access so ClawDroid can read and react to device notifications.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Button(
+                                onClick = { viewModel.processIntent(TelegramSettingsIntent.OpenNotificationListenerSettings) }
+                            ) {
+                                Text("Enable")
+                            }
+                        }
+
+                        if (state.isNotificationListenerEnabled) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = "Forward & auto-react to notifications",
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "Agent will process notifications and send responses via Telegram",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Switch(
+                                    checked = state.isNotificationForwardingEnabled,
+                                    onCheckedChange = { viewModel.processIntent(TelegramSettingsIntent.ToggleNotificationForwarding) },
+                                    enabled = state.isBotRunning
+                                )
+                            }
                         }
                     }
                 }

@@ -23,7 +23,8 @@ private const val TAG = "Agent"
 @Singleton
 class AndroidAgentFactory @Inject constructor(
     private val deviceTools: DeviceTools,
-    private val quickActionTools: QuickActionTools
+    private val quickActionTools: QuickActionTools,
+    private val notificationTools: NotificationTools
 ) {
     fun createAgent(config: AgentConfig): AIAgent<String, String> {
         return createAgent(config, emptyList())
@@ -51,6 +52,7 @@ class AndroidAgentFactory @Inject constructor(
             toolRegistry = ToolRegistry {
                 tools(deviceTools)
                 tools(quickActionTools)
+                tools(notificationTools)
             }
 
         ){

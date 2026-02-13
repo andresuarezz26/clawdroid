@@ -12,6 +12,7 @@ import com.aiassistant.domain.usecase.telegram.GetConversationHistoryUseCase
 import com.aiassistant.domain.usecase.telegram.PollUpdatesUseCase
 import com.aiassistant.domain.usecase.telegram.SaveMessageUseCase
 import com.aiassistant.domain.usecase.telegram.SendResponseUseCase
+import com.aiassistant.framework.notification.NotificationReactor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +50,9 @@ class TelegramBotService : Service() {
     @Inject
     lateinit var serviceState: TelegramServiceState
 
+    @Inject
+    lateinit var notificationReactor: NotificationReactor
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var pollingJob: Job? = null
     private var lastUpdateOffset: Long? = null
@@ -78,6 +82,7 @@ class TelegramBotService : Service() {
         serviceState.setRunning(false)
         Log.i(TAG, "Service destroyed")
         stopPolling()
+        notificationReactor.stopReacting()
         serviceScope.cancel()
         super.onDestroy()
     }
@@ -168,6 +173,8 @@ class TelegramBotService : Service() {
             }
 
             updateNotification()
+
+            notificationReactor.startReacting(chatId)
 
         } catch (e: Exception) {
             Log.e(TAG, "Error processing message", e)

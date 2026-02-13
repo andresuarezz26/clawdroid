@@ -1,11 +1,13 @@
 ## Sprint 1 Feb 11 - 2026 
 ### TODO
-- When the response is too long in telegram the agent doesn't reply so user never recieves a message
-- Being able to create recurrent jobs using WorkManager
 - Listen for notifications so the agent can react to new notifications
+- Being able to create recurrent jobs using WorkManager
+
 
 ### DONE
 - Currently when user closes the app the telegram flag is lost
+- When the response is too long in telegram the agent doesn't reply so user never recieves a message
+
 
 ## Backlog? 
 

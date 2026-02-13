@@ -44,7 +44,25 @@ class SharedPreferenceDataSourceImpl @Inject constructor(context: Context) :
     return !getToken().isNullOrBlank()
   }
 
+  override fun getNotificationForwardingEnabled(): Boolean {
+    return prefs.getBoolean(NOTIFICATION_FORWARDING_ENABLED, false)
+  }
+
+  override fun setNotificationForwardingEnabled(enabled: Boolean) {
+    prefs.edit { putBoolean(NOTIFICATION_FORWARDING_ENABLED, enabled) }
+  }
+
+  override fun getNotificationFilterPackages(): Set<String> {
+    return prefs.getStringSet(NOTIFICATION_FILTER_PACKAGES, emptySet()) ?: emptySet()
+  }
+
+  override fun setNotificationFilterPackages(packages: Set<String>) {
+    prefs.edit { putStringSet(NOTIFICATION_FILTER_PACKAGES, packages) }
+  }
+
   companion object {
     private const val TELEGRAM_TOKEN_PREF = "telegram_bot_token"
+    private const val NOTIFICATION_FORWARDING_ENABLED = "notification_forwarding_enabled"
+    private const val NOTIFICATION_FILTER_PACKAGES = "notification_filter_packages"
   }
 }

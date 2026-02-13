@@ -6,15 +6,18 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.aiassistant.data.local.AppDatabase
 import com.aiassistant.data.local.dao.TaskLogDao
+import com.aiassistant.data.local.dao.notification.NotificationDao
 import com.aiassistant.data.local.dao.telegram.TelegramConversationDao
 import com.aiassistant.data.local.dao.telegram.TelegramMessageDao
 import com.aiassistant.data.repository.AppRepositoryImpl
 import com.aiassistant.data.repository.ScreenRepositoryImpl
 import com.aiassistant.data.repository.TaskLogRepositoryImpl
 import com.aiassistant.data.repository.TelegramRepositoryImpl
+import com.aiassistant.data.repository.notification.NotificationRepositoryImpl
 import com.aiassistant.domain.repository.AppRepository
 import com.aiassistant.domain.repository.ScreenRepository
 import com.aiassistant.domain.repository.TaskLogRepository
+import com.aiassistant.domain.repository.notification.NotificationRepository
 import com.aiassistant.domain.repository.telegram.TelegramRepository
 import dagger.Binds
 import dagger.Module
@@ -43,11 +46,35 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindTelegramRepository(impl: TelegramRepositoryImpl): TelegramRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(impl: NotificationRepositoryImpl): NotificationRepository
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
+
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("""
+                CREATE TABLE IF NOT EXISTS notifications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    packageName TEXT NOT NULL,
+                    appName TEXT NOT NULL,
+                    title TEXT,
+                    text TEXT,
+                    timestamp INTEGER NOT NULL,
+                    isOngoing INTEGER NOT NULL,
+                    category TEXT
+                )
+            """.trimIndent())
+
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_notifications_timestamp ON notifications(timestamp)")
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_notifications_packageName ON notifications(packageName)")
+        }
+    }
 
     private val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
@@ -83,7 +110,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "clawdroid_db"
         )
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
     }
 
@@ -103,5 +130,11 @@ object DatabaseModule {
     @Singleton
     fun provideTelegramMessageDao(database: AppDatabase): TelegramMessageDao {
         return database.telegramMessageDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationDao(database: AppDatabase): NotificationDao {
+        return database.notificationDao()
     }
 }

@@ -7,6 +7,8 @@ import com.aiassistant.domain.preference.SharedPreferenceDataSource
 import com.aiassistant.domain.repository.telegram.TelegramConversation
 import com.aiassistant.domain.repository.telegram.TelegramRepository
 import com.aiassistant.domain.usecase.telegram.ValidateTokenUseCase
+import com.aiassistant.framework.notification.NotificationListenerServiceState
+import com.aiassistant.framework.permission.PermissionManager
 import com.aiassistant.framework.telegram.TelegramBotService
 import com.aiassistant.framework.telegram.TelegramServiceState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +28,9 @@ data class TelegramSettingsState(
   val isBotRunning: Boolean = false,
   val isValidating: Boolean = false,
   val validationResult: ValidationResult? = null,
-  val conversations: List<TelegramConversation> = emptyList()
+  val conversations: List<TelegramConversation> = emptyList(),
+  val isNotificationListenerEnabled: Boolean = false,
+  val isNotificationForwardingEnabled: Boolean = false
 )
 
 sealed interface ValidationResult {
@@ -41,6 +45,9 @@ sealed interface TelegramSettingsIntent {
   data object TestConnection : TelegramSettingsIntent
   data object ToggleBot : TelegramSettingsIntent
   data object DismissValidationResult : TelegramSettingsIntent
+  data object CheckNotificationListenerStatus : TelegramSettingsIntent
+  data object OpenNotificationListenerSettings : TelegramSettingsIntent
+  data object ToggleNotificationForwarding : TelegramSettingsIntent
 }
 
 @HiltViewModel
@@ -50,6 +57,8 @@ class TelegramSettingsViewModel @Inject constructor(
   private val telegramRepository: TelegramRepository,
   @ApplicationContext private val context: Context,
   private var serviceState: TelegramServiceState,
+  private val permissionManager: PermissionManager,
+  private val notificationListenerServiceState: NotificationListenerServiceState,
 ) : ViewModel() {
 
   private val _state = MutableStateFlow(TelegramSettingsState())
@@ -63,15 +72,23 @@ class TelegramSettingsViewModel @Inject constructor(
   private fun loadInitialState() {
     viewModelScope.launch {
       val hasToken = preferences.hasToken()
+      val forwardingEnabled = preferences.getNotificationForwardingEnabled()
       _state.update {
         it.copy(
           isTokenSet = hasToken,
-          token = if (hasToken) "********" else ""
+          token = if (hasToken) "********" else "",
+          isNotificationForwardingEnabled = forwardingEnabled
         )
       }
 
       serviceState.isRunning.collect { running ->
         _state.update { it.copy(isBotRunning = running) }
+      }
+    }
+
+    viewModelScope.launch {
+      notificationListenerServiceState.isConnected.collect { connected ->
+        _state.update { it.copy(isNotificationListenerEnabled = connected) }
       }
     }
   }
@@ -97,6 +114,9 @@ class TelegramSettingsViewModel @Inject constructor(
       is TelegramSettingsIntent.DismissValidationResult -> {
         _state.update { it.copy(validationResult = null) }
       }
+      is TelegramSettingsIntent.CheckNotificationListenerStatus -> checkNotificationListenerStatus()
+      is TelegramSettingsIntent.OpenNotificationListenerSettings -> openNotificationListenerSettings()
+      is TelegramSettingsIntent.ToggleNotificationForwarding -> toggleNotificationForwarding()
     }
   }
 
@@ -167,5 +187,20 @@ class TelegramSettingsViewModel @Inject constructor(
         _state.update { it.copy(isBotRunning = true) }
       }
     }
+  }
+
+  private fun checkNotificationListenerStatus() {
+    val enabled = permissionManager.isNotificationListenerEnabled()
+    _state.update { it.copy(isNotificationListenerEnabled = enabled) }
+  }
+
+  private fun openNotificationListenerSettings() {
+    permissionManager.openNotificationListenerSettings(context)
+  }
+
+  private fun toggleNotificationForwarding() {
+    val newValue = !_state.value.isNotificationForwardingEnabled
+    preferences.setNotificationForwardingEnabled(newValue)
+    _state.update { it.copy(isNotificationForwardingEnabled = newValue) }
   }
 }
