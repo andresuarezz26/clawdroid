@@ -5,18 +5,15 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.aiassistant.data.local.AppDatabase
-import com.aiassistant.data.local.dao.TaskLogDao
 import com.aiassistant.data.local.dao.notification.NotificationDao
 import com.aiassistant.data.local.dao.telegram.TelegramConversationDao
 import com.aiassistant.data.local.dao.telegram.TelegramMessageDao
 import com.aiassistant.data.repository.AppRepositoryImpl
 import com.aiassistant.data.repository.ScreenRepositoryImpl
-import com.aiassistant.data.repository.TaskLogRepositoryImpl
-import com.aiassistant.data.repository.TelegramRepositoryImpl
+import com.aiassistant.data.repository.telegram.TelegramRepositoryImpl
 import com.aiassistant.data.repository.notification.NotificationRepositoryImpl
 import com.aiassistant.domain.repository.AppRepository
 import com.aiassistant.domain.repository.ScreenRepository
-import com.aiassistant.domain.repository.TaskLogRepository
 import com.aiassistant.domain.repository.notification.NotificationRepository
 import com.aiassistant.domain.repository.telegram.TelegramRepository
 import dagger.Binds
@@ -34,10 +31,6 @@ abstract class DataModule {
     @Binds
     @Singleton
     abstract fun bindScreenRepository(impl: ScreenRepositoryImpl): ScreenRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindTaskLogRepository(impl: TaskLogRepositoryImpl): TaskLogRepository
 
     @Binds
     @Singleton
@@ -112,12 +105,6 @@ object DatabaseModule {
         )
             .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .build()
-    }
-
-    @Provides
-    @Singleton
-    fun provideTaskLogDao(database: AppDatabase): TaskLogDao {
-        return database.taskLogDao()
     }
 
     @Provides

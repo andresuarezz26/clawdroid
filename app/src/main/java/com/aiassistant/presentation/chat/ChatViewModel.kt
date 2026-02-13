@@ -131,8 +131,6 @@ class ChatViewModel @Inject constructor(
                 Log.i(TAG, "Running agent with command: $command")
                 val result = runWithRetry(maxRetries = 3) {
                     agent.run(command)
-
-
                 }
 
                 Log.i(TAG, "Agent run completed with result: $result")

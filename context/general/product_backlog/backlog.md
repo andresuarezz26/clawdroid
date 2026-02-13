@@ -1,12 +1,14 @@
 ## Sprint 1 Feb 11 - 2026 
 ### TODO
-- Listen for notifications so the agent can react to new notifications
+- Agent loose context many times this is because there is not defined how the data is being saved and what data is used for the prompt
+making sometimes the agent start with a completily new conversation loosing all the context. 
 - Being able to create recurrent jobs using WorkManager
 
 
 ### DONE
 - Currently when user closes the app the telegram flag is lost
 - When the response is too long in telegram the agent doesn't reply so user never recieves a message
+- Listen for notifications so the agent can react to new notifications
 
 
 ## Backlog? 
