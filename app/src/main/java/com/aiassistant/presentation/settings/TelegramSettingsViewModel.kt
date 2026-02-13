@@ -9,7 +9,6 @@ import com.aiassistant.domain.repository.telegram.TelegramRepository
 import com.aiassistant.domain.usecase.telegram.ValidateTokenUseCase
 import com.aiassistant.framework.telegram.TelegramBotService
 import com.aiassistant.framework.telegram.TelegramServiceState
-import com.aiassistant.presentation.navigation.NavigationScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow

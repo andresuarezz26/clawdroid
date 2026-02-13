@@ -52,9 +52,39 @@ class TelegramRepositoryImpl @Inject constructor(
 
     override suspend fun sendResponse(chatId: Long, text: String): Result<Unit> {
         return runCatching {
-            telegramApi.sendMessage(chatId, text)
-            Unit
+            val chunks = splitMessage(text)
+            for (chunk in chunks) {
+                telegramApi.sendMessage(chatId, chunk)
+            }
         }
+    }
+
+    private fun splitMessage(text: String, maxLength: Int = 4096): List<String> {
+        if (text.length <= maxLength) return listOf(text)
+
+        val chunks = mutableListOf<String>()
+        var remaining = text
+
+        while (remaining.isNotEmpty()) {
+            if (remaining.length <= maxLength) {
+                chunks.add(remaining)
+                break
+            }
+
+            // Try to split at last newline within limit
+            val splitIndex = remaining.lastIndexOf('\n', maxLength)
+                .takeIf { it > maxLength / 2 }
+            // Otherwise split at last space
+                ?: remaining.lastIndexOf(' ', maxLength)
+                    .takeIf { it > maxLength / 2 }
+            // Hard split as last resort
+                ?: maxLength
+
+            chunks.add(remaining.substring(0, splitIndex).trimEnd())
+            remaining = remaining.substring(splitIndex).trimStart()
+        }
+
+        return chunks
     }
 
     override suspend fun getConversationHistory(chatId: Long, limit: Int): List<ChatMessage> {
