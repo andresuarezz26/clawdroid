@@ -46,6 +46,9 @@ class TelegramBotService : Service() {
     @Inject
     lateinit var notificationManager: TelegramNotificationManager
 
+    @Inject
+    lateinit var serviceState: TelegramServiceState
+
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var pollingJob: Job? = null
     private var lastUpdateOffset: Long? = null
@@ -59,6 +62,8 @@ class TelegramBotService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.i(TAG, "Service started")
 
+        serviceState.setRunning(true)
+
         val notification = notificationManager.createServiceNotification("Starting...")
         startForeground(TelegramNotificationManager.NOTIFICATION_ID, notification)
 
@@ -70,6 +75,7 @@ class TelegramBotService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        serviceState.setRunning(false)
         Log.i(TAG, "Service destroyed")
         stopPolling()
         serviceScope.cancel()

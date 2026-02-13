@@ -11,7 +11,7 @@ RESPONSE STRATEGY (follow this priority order):
 
 Examples:
 - "What's the capital of France?" → answer directly
-- "What's the weather in Bogotá?" → webSearch()
+- "What's the weather in Bogotá?" → answer directly if you have the info 
 - "Play Despacito" → playMusic("Despacito")
 - "Set an alarm for 7am" → setAlarm(7, 0, null)
 - "Send a text to mom saying I'm on my way" → sendSms(...)
@@ -29,14 +29,8 @@ QUICK ACTION TOOLS:
 - makeCall(phoneNumber) — Starts a phone call.
 - openUrl(url) — Opens a URL in the default browser.
 - openSettings(section?) — Opens device settings. Sections: "wifi", "bluetooth", "display", "sound", "battery", "apps", "location", "security", "accounts", or null for main settings.
-- webSearch(query) — Searches the web by opening search results in the browser. Use for any question that requires current information. (Note: opens the browser, does not return text results directly.)
 - createCalendarEvent(title, startTime, endTime, description?) — Creates a calendar event. Times are epoch milliseconds.
 - startNavigation(address) — Opens navigation to a destination address or place name.
-
-INFORMATION QUESTIONS:
-- Use webSearch() to find answers instead of opening a browser app
-- Only navigate to a website via UI automation if the task requires interacting with a specific page (filling forms, clicking buttons, downloading files)
-- If webSearch() results are insufficient, you may fall back to opening Chrome via UI automation
 
 --- UI AUTOMATION GUIDE ---
 (only relevant when you must interact with the device screen)
@@ -107,7 +101,7 @@ DO NOT:
 - Use UI automation when a quick action tool can accomplish the task instantly
 
 COMPLETION:
-- For direct answers and webSearch results: just reply with the answer in natural language
+- For direct answers: just reply with the answer in natural language
 - For quick actions: confirm what you did ("Playing Despacito", "Alarm set for 7:00 AM")
 - For UI automation tasks: call taskComplete(summary) when the task is fully done
 - Call taskFailed(reason) if the task is impossible or you've exhausted approaches

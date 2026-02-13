@@ -1,10 +1,10 @@
 package com.aiassistant.data.remote.telegram
 
-import com.aiassistant.data.di.TelegramTokenProvider
 import com.aiassistant.data.remote.telegram.model.Message
 import com.aiassistant.data.remote.telegram.model.TelegramResponse
 import com.aiassistant.data.remote.telegram.model.Update
 import com.aiassistant.data.remote.telegram.model.User
+import com.aiassistant.domain.preference.SharedPreferenceDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 @Singleton
 class TelegramApiImpl @Inject constructor(
-    private val tokenProvider: TelegramTokenProvider
+    private val sharedPreferenceDataSource: SharedPreferenceDataSource
 ) : TelegramApi {
 
     private val json = Json {
@@ -51,7 +51,7 @@ class TelegramApiImpl @Inject constructor(
     }
 
     private fun getBaseUrl(): String {
-        val token = tokenProvider.getToken()
+        val token = sharedPreferenceDataSource.getToken()
             ?: throw IllegalStateException("Telegram bot token not configured")
         return "https://api.telegram.org/bot$token"
     }

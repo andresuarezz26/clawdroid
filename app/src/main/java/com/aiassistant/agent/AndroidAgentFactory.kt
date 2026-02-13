@@ -94,6 +94,7 @@ class AndroidAgentFactory @Inject constructor(
             "gpt-4-turbo" -> OpenAIModels.Chat.GPT4_1Mini
             "gpt-5" -> OpenAIModels.Chat.GPT5
             "gpt-5-mini" -> OpenAIModels.Chat.GPT5Mini
+            "gpt-5.2" -> OpenAIModels.Chat.GPT5_2
             else -> OpenAIModels.Chat.GPT4oMini
         }
         LLMProvider.ANTHROPIC -> when (config.model) {
