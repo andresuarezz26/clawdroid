@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "telegram_messages",
+    tableName = "messages",
     foreignKeys = [
       ForeignKey(
         entity = ConversationEntity::class,

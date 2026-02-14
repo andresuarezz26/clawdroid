@@ -15,7 +15,10 @@ import com.aiassistant.agent.AndroidAgentFactory
 import com.aiassistant.agent.LLMProvider
 import com.aiassistant.data.remote.ApiKeyProvider
 import com.aiassistant.domain.model.ChatMessage
+import com.aiassistant.domain.model.DEFAULT_CHAT_ID
 import com.aiassistant.domain.repository.ScreenRepository
+import com.aiassistant.domain.usecase.messages.GetConversationHistoryUseCase
+import com.aiassistant.domain.usecase.messages.SaveMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
@@ -28,7 +31,9 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.isActive
+import kotlinx.coroutines.withContext
 import kotlinx.io.files.Path
 
 private const val TAG = "Agent"
@@ -37,7 +42,9 @@ private const val TAG = "Agent"
 class ChatViewModel @Inject constructor(
     private val agentFactory: AndroidAgentFactory,
     private val apiKeyProvider: ApiKeyProvider,
-    private val screenRepository: ScreenRepository
+    private val screenRepository: ScreenRepository,
+    private val saveMessageUseCase: SaveMessageUseCase,
+    private val getConversationHistoryUseCase: GetConversationHistoryUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ChatState())
@@ -52,9 +59,12 @@ class ChatViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            while (true) {
-                _state.update { it.copy(isServiceConnected = screenRepository.isServiceConnected()) }
-                delay(2000)
+            val history = getConversationHistoryUseCase(DEFAULT_CHAT_ID, limit = 50)
+            _state.update { it.copy(messages = history) }
+        }
+        viewModelScope.launch {
+            screenRepository.isServiceConnected().collect { connected ->
+                _state.update { it.copy(isServiceConnected = connected) }
             }
         }
     }
@@ -94,9 +104,10 @@ class ChatViewModel @Inject constructor(
         // Capture conversation history BEFORE adding the new user message
         val historyForContext = _state.value.messages
 
+        val userMessage = ChatMessage(content = command, isUser = true)
         _state.update {
             it.copy(
-                messages = it.messages + ChatMessage(content = command, isUser = true),
+                messages = it.messages + userMessage,
                 inputText = "",
                 isExecuting = true,
                 currentStep = "Starting...",
@@ -108,6 +119,9 @@ class ChatViewModel @Inject constructor(
 
         executionJob = viewModelScope.launch {
             try {
+                // Save user message to DB
+                saveMessageUseCase(DEFAULT_CHAT_ID, command, isFromUser = true)
+
                 Log.i(TAG, "Creating agent config")
                 val config = AgentConfig(
                     provider = LLMProvider.OPENAI,
@@ -135,10 +149,7 @@ class ChatViewModel @Inject constructor(
 
                 Log.i(TAG, "Agent run completed with result: $result")
 
-
-
                 progressJob.cancel()
-
 
                 // Parse the result to determine success/failure
                 val resultText = when {
@@ -150,6 +161,9 @@ class ChatViewModel @Inject constructor(
                     }
                     else -> result
                 }
+
+                // Save agent response to DB
+                saveMessageUseCase(DEFAULT_CHAT_ID, resultText, isFromUser = false)
 
                 _state.update {
                     it.copy(

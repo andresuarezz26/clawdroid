@@ -79,7 +79,7 @@ class AndroidAgentFactory @Inject constructor(
         val historySection = buildString {
             appendLine("\n\n--- CONVERSATION HISTORY ---")
             appendLine("(Previous messages in this session for context)")
-            history.takeLast(100).forEach { msg ->  // Limit to last 10 to manage tokens
+            history.takeLast(30).forEach { msg ->  // Limit to last 30 to manage tokens
                 val role = if (msg.isUser) "User" else "Assistant"
                 appendLine("$role: ${msg.content}")
             }

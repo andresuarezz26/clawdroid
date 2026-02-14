@@ -35,7 +35,7 @@ class AgentExecutor @Inject constructor(
             return AgentResult.Failure("Command is blank")
         }
 
-        if (requireServiceConnection && !screenRepository.isServiceConnected()) {
+        if (requireServiceConnection && !screenRepository.isServiceConnected().value) {
             Log.i(TAG, "Service not connected")
             return AgentResult.ServiceNotConnected
         }

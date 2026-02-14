@@ -13,9 +13,12 @@ interface ConversationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(conversation: ConversationEntity)
 
-    @Query("SELECT * FROM telegram_conversations ORDER BY lastMessageAt DESC")
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfNotExists(conversation: ConversationEntity)
+
+    @Query("SELECT * FROM conversations ORDER BY lastMessageAt DESC")
     fun getAllConversations(): Flow<List<ConversationEntity>>
 
-    @Query("UPDATE telegram_conversations SET lastMessageAt = :timestamp WHERE chatId = :chatId")
+    @Query("UPDATE conversations SET lastMessageAt = :timestamp WHERE chatId = :chatId")
     suspend fun updateLastMessageTime(chatId: Long, timestamp: Long)
 }

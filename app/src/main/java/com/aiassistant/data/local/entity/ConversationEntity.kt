@@ -3,7 +3,7 @@ package com.aiassistant.data.local.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "telegram_conversations")
+@Entity(tableName = "conversations")
 data class ConversationEntity(
     @PrimaryKey
     val chatId: Long,

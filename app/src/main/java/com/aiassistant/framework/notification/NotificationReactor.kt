@@ -3,6 +3,7 @@ package com.aiassistant.framework.notification
 import android.util.Log
 import com.aiassistant.agent.AgentExecutor
 import com.aiassistant.agent.AgentResult
+import com.aiassistant.domain.model.DEFAULT_CHAT_ID
 import com.aiassistant.domain.preference.SharedPreferenceDataSource
 import com.aiassistant.domain.repository.notification.NotificationRepository
 import com.aiassistant.domain.usecase.messages.GetConversationHistoryUseCase
@@ -35,10 +36,10 @@ class NotificationReactor @Inject constructor(
     private var collectionJob: Job? = null
     private var lastAgentExecutionTime = 0L
 
-    fun startReacting(chatId: Long) {
+    fun startReacting(telegramChatId: Long) {
         if (collectionJob?.isActive == true) return
 
-        Log.i(TAG, "Starting notification reactor for chatId=$chatId")
+        Log.i(TAG, "Starting notification reactor for telegramChatId=$telegramChatId")
         collectionJob = scope.launch {
             repository.incomingNotifications.collect { notification ->
                 try {
@@ -76,11 +77,11 @@ class NotificationReactor @Inject constructor(
 
                     Log.i(TAG, "Processing notification from ${notification.appName}")
 
-                    // Save as user message
-                    saveMessageUseCase(chatId, prompt, isFromUser = true)
+                    // Save as user message to unified conversation
+                    saveMessageUseCase(DEFAULT_CHAT_ID, prompt, isFromUser = true)
 
-                    // Get conversation history
-                    val history = getConversationHistoryUseCase(chatId, limit = 20)
+                    // Get conversation history from unified conversation
+                    val history = getConversationHistoryUseCase(DEFAULT_CHAT_ID, limit = 20)
 
                     // Execute agent
                     val result = agentExecutor.execute(
@@ -96,11 +97,11 @@ class NotificationReactor @Inject constructor(
                         is AgentResult.Cancelled -> return@collect
                     }
 
-                    // Save response
-                    saveMessageUseCase(chatId, responseText, isFromUser = false)
+                    // Save response to unified conversation
+                    saveMessageUseCase(DEFAULT_CHAT_ID, responseText, isFromUser = false)
 
-                    // Send to Telegram
-                    sendResponseTelegramUseCase(chatId, responseText).onFailure { error ->
+                    // Send to Telegram (using real Telegram chatId)
+                    sendResponseTelegramUseCase(telegramChatId, responseText).onFailure { error ->
                         Log.e(TAG, "Failed to send notification response to Telegram", error)
                     }
                 } catch (e: Exception) {

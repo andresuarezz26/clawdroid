@@ -8,6 +8,7 @@ import com.aiassistant.framework.accessibility.AccessibilityServiceBridge
 import com.aiassistant.framework.accessibility.ActionPerformer
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.StateFlow
 
 @Singleton
 class ScreenRepositoryImpl @Inject constructor(
@@ -25,7 +26,7 @@ class ScreenRepositoryImpl @Inject constructor(
         return actionPerformer.execute(action, screenParser.nodeMap)
     }
 
-    override fun isServiceConnected(): Boolean {
+    override fun isServiceConnected(): StateFlow<Boolean> {
         return serviceBridge.isConnected()
     }
 }

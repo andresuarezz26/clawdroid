@@ -2,6 +2,7 @@ package com.aiassistant.data.repository.messages
 
 import com.aiassistant.data.local.dao.telegram.ConversationDao
 import com.aiassistant.data.local.dao.telegram.MessageDao
+import com.aiassistant.data.local.entity.ConversationEntity
 import com.aiassistant.data.local.entity.MessageEntity
 import com.aiassistant.domain.model.ChatMessage
 import com.aiassistant.domain.repository.messages.MessagesRepository
@@ -29,14 +30,22 @@ class MessagesRepositoryImpl @Inject constructor(
   }
 
   override suspend fun saveMessage(chatId: Long, content: String, isFromUser: Boolean) {
+    val now = System.currentTimeMillis()
+    // Ensure conversation exists (IGNORE so existing row + its messages are preserved)
+    conversationDao.insertIfNotExists(ConversationEntity(
+      chatId = chatId,
+      username = null,
+      firstName = null,
+      lastMessageAt = now
+    ))
     val entity = MessageEntity(
       chatId = chatId,
       content = content,
       isFromUser = isFromUser,
-      timestamp = System.currentTimeMillis()
+      timestamp = now
     )
     messageDao.insert(entity)
-    conversationDao.updateLastMessageTime(chatId, System.currentTimeMillis())
+    conversationDao.updateLastMessageTime(chatId, now)
   }
 
   override fun observeConversations(): Flow<List<ConversationModel>> {

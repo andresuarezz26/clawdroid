@@ -8,6 +8,7 @@ import android.os.IBinder
 import android.util.Log
 import com.aiassistant.agent.AgentExecutor
 import com.aiassistant.agent.AgentResult
+import com.aiassistant.domain.model.DEFAULT_CHAT_ID
 import com.aiassistant.domain.usecase.messages.GetConversationHistoryUseCase
 import com.aiassistant.domain.usecase.telegram.PollUpdatesTelegramUseCase
 import com.aiassistant.domain.usecase.messages.SaveMessageUseCase
@@ -140,12 +141,12 @@ class TelegramBotService : Service() {
         Log.i(TAG, "Processing message from $chatId: $text")
 
         try {
-            // Save user message
-            saveMessageUseCase(chatId, text, isFromUser = true)
+            // Save user message to unified conversation
+            saveMessageUseCase(DEFAULT_CHAT_ID, text, isFromUser = true)
             messageCount++
 
-            // Get conversation history for context
-            val history = getConversationHistoryUseCase(chatId, limit = 20)
+            // Get conversation history from unified conversation
+            val history = getConversationHistoryUseCase(DEFAULT_CHAT_ID, limit = 20)
 
             // Execute agent (don't require service connection for Telegram - we allow text responses)
             val result = agentExecutor.execute(
@@ -164,17 +165,17 @@ class TelegramBotService : Service() {
                 is AgentResult.Cancelled -> "Task was cancelled."
             }
 
-            // Save bot response
-            saveMessageUseCase(chatId, responseText, isFromUser = false)
+            // Save bot response to unified conversation
+            saveMessageUseCase(DEFAULT_CHAT_ID, responseText, isFromUser = false)
 
-            // Send response to Telegram
+            // Send response to Telegram (using real Telegram chatId)
             sendResponseTelegramUseCase(chatId, responseText).onFailure { error ->
                 Log.e(TAG, "Failed to send response: ${error.message}")
             }
 
             updateNotification()
 
-            notificationReactor.startReacting(chatId)
+            notificationReactor.startReacting(telegramChatId = chatId)
 
         } catch (e: Exception) {
             Log.e(TAG, "Error processing message", e)

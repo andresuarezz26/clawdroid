@@ -6,10 +6,11 @@ import android.content.Context
 import android.view.accessibility.AccessibilityNodeInfo
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.StateFlow
 
 interface AccessibilityServiceBridge {
     fun getRootNode(): AccessibilityNodeInfo?
-    fun isConnected(): Boolean
+    fun isConnected(): StateFlow<Boolean>
     fun performGlobalAction(action: Int): Boolean
     fun getContext(): Context?
     fun dispatchGesture(gesture: GestureDescription, callback: GestureResultCallback?): Boolean
@@ -22,8 +23,8 @@ class AccessibilityServiceBridgeImpl @Inject constructor() : AccessibilityServic
         return AutomatorAccessibilityService.getInstance()?.rootInActiveWindow
     }
 
-    override fun isConnected(): Boolean {
-        return AutomatorAccessibilityService.isConnected.value
+    override fun isConnected(): StateFlow<Boolean>{
+        return AutomatorAccessibilityService.isConnected
     }
 
     override fun performGlobalAction(action: Int): Boolean {
