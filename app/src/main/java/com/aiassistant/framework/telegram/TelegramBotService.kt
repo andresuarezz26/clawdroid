@@ -9,11 +9,11 @@ import android.util.Log
 import com.aiassistant.agent.AgentExecutor
 import com.aiassistant.agent.AgentResult
 import com.aiassistant.domain.model.DEFAULT_CHAT_ID
+import com.aiassistant.domain.preference.SharedPreferenceDataSource
 import com.aiassistant.domain.usecase.messages.GetConversationHistoryUseCase
 import com.aiassistant.domain.usecase.telegram.PollUpdatesTelegramUseCase
 import com.aiassistant.domain.usecase.messages.SaveMessageUseCase
 import com.aiassistant.domain.usecase.telegram.SendResponseTelegramUseCase
-import com.aiassistant.framework.notification.NotificationReactor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +52,7 @@ class TelegramBotService : Service() {
     lateinit var serviceState: TelegramServiceState
 
     @Inject
-    lateinit var notificationReactor: NotificationReactor
+    lateinit var preferences: SharedPreferenceDataSource
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private var pollingJob: Job? = null
@@ -83,7 +83,6 @@ class TelegramBotService : Service() {
         serviceState.setRunning(false)
         Log.i(TAG, "Service destroyed")
         stopPolling()
-        notificationReactor.stopReacting()
         serviceScope.cancel()
         super.onDestroy()
     }
@@ -175,7 +174,8 @@ class TelegramBotService : Service() {
 
             updateNotification()
 
-            notificationReactor.startReacting(telegramChatId = chatId)
+            // Persist telegram chat ID so NotificationReactor can send to Telegram independently
+            preferences.setTelegramChatId(chatId)
 
         } catch (e: Exception) {
             Log.e(TAG, "Error processing message", e)

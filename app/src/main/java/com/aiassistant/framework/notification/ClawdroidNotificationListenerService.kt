@@ -27,10 +27,12 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
     interface NotificationListenerEntryPoint {
         fun notificationRepository(): NotificationRepository
         fun notificationListenerServiceState(): NotificationListenerServiceState
+        fun notificationReactor(): NotificationReactor
     }
 
     private var repository: NotificationRepository? = null
     private var serviceStateTracker: NotificationListenerServiceState? = null
+    private var notificationReactor: NotificationReactor? = null
     private var scope: CoroutineScope? = null
     private val recentNotificationKeys = LinkedHashSet<String>()
 
@@ -44,9 +46,11 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
         )
         repository = entryPoint.notificationRepository()
         serviceStateTracker = entryPoint.notificationListenerServiceState()
+        notificationReactor = entryPoint.notificationReactor()
 
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         serviceStateTracker?.setConnected(true)
+        notificationReactor?.startReacting()
 
         scope?.launch {
             try {
@@ -61,6 +65,7 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
         super.onListenerDisconnected()
         Log.i(TAG, "Notification listener disconnected")
         serviceStateTracker?.setConnected(false)
+        notificationReactor?.stopReacting()
         scope?.cancel()
         scope = null
     }

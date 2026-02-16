@@ -9,4 +9,6 @@ interface SharedPreferenceDataSource {
   fun setNotificationForwardingEnabled(enabled: Boolean)
   fun getNotificationFilterPackages(): Set<String>
   fun setNotificationFilterPackages(packages: Set<String>)
+  fun getTelegramChatId(): Long?
+  fun setTelegramChatId(chatId: Long)
 }

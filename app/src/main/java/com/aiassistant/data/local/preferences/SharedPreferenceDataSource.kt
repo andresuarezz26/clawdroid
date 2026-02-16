@@ -60,9 +60,19 @@ class SharedPreferenceDataSourceImpl @Inject constructor(context: Context) :
     prefs.edit { putStringSet(NOTIFICATION_FILTER_PACKAGES, packages) }
   }
 
+  override fun getTelegramChatId(): Long? {
+    val id = prefs.getLong(TELEGRAM_CHAT_ID, -1L)
+    return if (id == -1L) null else id
+  }
+
+  override fun setTelegramChatId(chatId: Long) {
+    prefs.edit { putLong(TELEGRAM_CHAT_ID, chatId) }
+  }
+
   companion object {
     private const val TELEGRAM_TOKEN_PREF = "telegram_bot_token"
     private const val NOTIFICATION_FORWARDING_ENABLED = "notification_forwarding_enabled"
     private const val NOTIFICATION_FILTER_PACKAGES = "notification_filter_packages"
+    private const val TELEGRAM_CHAT_ID = "telegram_chat_id"
   }
 }
