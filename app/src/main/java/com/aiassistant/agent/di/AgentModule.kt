@@ -1,5 +1,6 @@
 package com.aiassistant.agent.di
 
+import android.content.Context
 import com.aiassistant.agent.AndroidAgentFactory
 import com.aiassistant.agent.DeviceTools
 import com.aiassistant.agent.NotificationTools
@@ -7,9 +8,11 @@ import com.aiassistant.agent.QuickActionTools
 import com.aiassistant.data.mapper.UINodeFormatter
 import com.aiassistant.domain.repository.ScreenRepository
 import com.aiassistant.domain.usecase.notification.GetRecentNotificationsUseCase
+import com.aiassistant.framework.notification.NotificationActionStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -37,9 +40,11 @@ object AgentModule {
     @Provides
     @Singleton
     fun provideNotificationTools(
-        getRecentNotificationsUseCase: GetRecentNotificationsUseCase
+        getRecentNotificationsUseCase: GetRecentNotificationsUseCase,
+        notificationActionStore: NotificationActionStore,
+        @ApplicationContext context: Context
     ): NotificationTools {
-        return NotificationTools(getRecentNotificationsUseCase)
+        return NotificationTools(getRecentNotificationsUseCase, notificationActionStore, context)
     }
 
     @Provides

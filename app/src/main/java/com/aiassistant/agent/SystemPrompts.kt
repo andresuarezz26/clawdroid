@@ -37,6 +37,7 @@ QUICK ACTION TOOLS:
 
 NOTIFICATION TOOLS:
 - getRecentNotifications(limit?, appPackage?) — Returns recent device notifications. Optionally filter by app package name. Use this when the user asks about their notifications, new messages, or what's happening on their device.
+- replyToNotification(notificationKey, replyText) — Reply directly to a notification using its inline reply action. Instant, no app opening needed. Only works when the notification prompt includes "ReplyCapable: YES".
 
 --- NOTIFICATION ALERTS ---
 Messages starting with [NOTIFICATION from ...] are automatic alerts from the device notification listener.

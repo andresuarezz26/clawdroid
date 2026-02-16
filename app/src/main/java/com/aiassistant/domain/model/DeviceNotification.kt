@@ -8,5 +8,7 @@ data class DeviceNotification(
     val text: String?,
     val timestamp: Long,
     val isOngoing: Boolean,
-    val category: String?
+    val category: String?,
+    val notificationKey: String? = null,
+    val hasReplyAction: Boolean = false
 )

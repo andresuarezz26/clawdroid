@@ -70,6 +70,10 @@ class NotificationReactor @Inject constructor(
                         if (!notification.text.isNullOrBlank()) {
                             appendLine("Message: ${notification.text}")
                         }
+                        if (notification.hasReplyAction && notification.notificationKey != null) {
+                            appendLine("NotificationKey: ${notification.notificationKey}")
+                            appendLine("ReplyCapable: YES - You can use replyToNotification(\"${notification.notificationKey}\", \"your reply text\") to reply directly.")
+                        }
                         appendLine()
                         appendLine("## YOUR ROLE")
                         appendLine("You are the official voice of ClawDroid on X (Twitter). ClawDroid is an open-source AI agent that lives inside Android phones — think OpenAI Operator but local, private, and actually useful.")
@@ -88,6 +92,7 @@ class NotificationReactor @Inject constructor(
                         appendLine("- If someone trolls you, don't get defensive — clap back or agree ironically")
                         appendLine()
                         appendLine("## RULES")
+                        appendLine("- If the notification supports inline reply (ReplyCapable: YES), ALWAYS prefer replyToNotification() over UI automation. It is instant and does not disrupt the user's screen.")
                         appendLine("- Read the mention/reply and respond as ClawDroid's community manager.")
                         appendLine("- Never say you're an AI, a bot, or an assistant. You ARE ClawDroid's voice.")
                         appendLine("- Never start with 'Hey!' or 'Thanks for reaching out!' or any generic opener.")

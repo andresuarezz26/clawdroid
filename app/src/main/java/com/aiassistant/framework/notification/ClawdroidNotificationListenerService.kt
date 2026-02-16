@@ -28,11 +28,13 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
         fun notificationRepository(): NotificationRepository
         fun notificationListenerServiceState(): NotificationListenerServiceState
         fun notificationReactor(): NotificationReactor
+        fun notificationActionStore(): NotificationActionStore
     }
 
     private var repository: NotificationRepository? = null
     private var serviceStateTracker: NotificationListenerServiceState? = null
     private var notificationReactor: NotificationReactor? = null
+    private var notificationActionStore: NotificationActionStore? = null
     private var scope: CoroutineScope? = null
     private val recentNotificationKeys = LinkedHashSet<String>()
 
@@ -47,10 +49,13 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
         repository = entryPoint.notificationRepository()
         serviceStateTracker = entryPoint.notificationListenerServiceState()
         notificationReactor = entryPoint.notificationReactor()
+        notificationActionStore = entryPoint.notificationActionStore()
 
         scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
         serviceStateTracker?.setConnected(true)
         notificationReactor?.startReacting()
+
+        notificationActionStore?.evictOlderThan(OLD_NOTIFICATION_THRESHOLD_MS)
 
         scope?.launch {
             try {
@@ -68,6 +73,11 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
         notificationReactor?.stopReacting()
         scope?.cancel()
         scope = null
+    }
+
+    override fun onNotificationRemoved(sbn: StatusBarNotification?) {
+        sbn ?: return
+        notificationActionStore?.removeReplyAction(sbn.key)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
@@ -107,6 +117,30 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
             sbn.packageName
         }
 
+        // Extract inline reply action if present
+        val notifKey = sbn.key
+        var hasReplyAction = false
+        val actions = sbn.notification.actions
+        if (actions != null) {
+            for (action in actions) {
+                val remoteInputs = action.remoteInputs
+                if (remoteInputs != null && remoteInputs.isNotEmpty()) {
+                    notificationActionStore?.storeReplyAction(
+                        notifKey,
+                        NotificationReplyAction(
+                            pendingIntent = action.actionIntent,
+                            remoteInputs = remoteInputs.toList(),
+                            notificationKey = notifKey,
+                            packageName = sbn.packageName
+                        )
+                    )
+                    hasReplyAction = true
+                    Log.d(TAG, "Stored reply action for $notifKey from $appName")
+                    break
+                }
+            }
+        }
+
         val notification = DeviceNotification(
             packageName = sbn.packageName,
             appName = appName,
@@ -114,10 +148,12 @@ class ClawdroidNotificationListenerService : NotificationListenerService() {
             text = text,
             timestamp = sbn.postTime,
             isOngoing = false,
-            category = sbn.notification.category
+            category = sbn.notification.category,
+            notificationKey = notifKey,
+            hasReplyAction = hasReplyAction
         )
 
-        Log.d(TAG, "Notification from $appName: $title - $text")
+        Log.d(TAG, "Notification from $appName: $title - $text (replyCapable=$hasReplyAction)")
 
         currentScope.launch {
             try {
