@@ -104,77 +104,48 @@ For users who have difficulty interacting with touchscreens, ClawDroid provides 
 
 ## Architecture
 
-ClawDroid uses a 4-tier response strategy. The LLM decides the best approach for each request:
+## Architecture
 
+ClawDroid uses a multi-tier response strategy. The LLM decides the best approach for each request:
 ```
-User Message (via Telegram or in-app chat)
-     |
-     v
-+----------------------------+
-|       LLM Decision         |
-|  "What's the best approach?" |
-+----------------------------+
-     |
-     +--------+--------+-----------+
-     v        v        v           v
-  Direct    Web     Quick       UI
-  Answer   Search  Actions   Automation
-             |        |           |
-          Opens    Android    Accessibility
-          Browser  Intents     Service
-             |        |           |
-          Needs    Instant!    Slow but
-          screen               works on
-          reading              any app
-          to parse
+## Architecture
+```
+                         ┌──────────────────┐
+                         │   INPUT SOURCES  │
+                         └────────┬─────────┘
+                                  │
+          ┌───────────────────────┼───────────────────────┐
+          ▼                       ▼                       ▼
+   ┌─────────────┐        ┌─────────────┐        ┌───────────────┐
+   │  In-App     │        │  Telegram   │        │ Notifications │
+   │  Chat UI    │        │  Bot API    │        │   Listener    │
+   └──────┬──────┘        └──────┬──────┘        └───────┬───────┘
+          │                      │                       │
+          └──────────────────────┴───────────────────────┘
+                                 │
+                                 ▼
+                    ┌────────────────────────┐
+                    │     LLM DECISION       │
+                    │ "What's the best way?" │
+                    └───────────┬────────────┘
+                                │
+        ┌───────────┬───────────┼───────────┬───────────┐
+        ▼           ▼           ▼           ▼           ▼
+   ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐
+   │ Direct  │ │  Web    │ │ Quick   │ │   UI    │ │Schedule │
+   │ Answer  │ │ Search  │ │ Actions │ │ Automat.│ │  Task   │
+   └─────────┘ └─────────┘ └─────────┘ └─────────┘ └─────────┘
+                   │           │           │           │
+                Browser    Intents   Accessibility  WorkManager/AlarmManager
+                   │       (instant)   Service     (recurring)
+                Needs                 Works on
+                parsing               any app
 ```
 
 1. **Direct answer** — If the LLM knows the answer, just respond
 2. **Web search** — Opens a browser search; the agent can read the screen afterward
 3. **Quick actions** — For system actions (SMS, calls, alarms, navigation, calendar), use native intents
 4. **UI automation** — Read the screen and interact with any app element
-
----
-
-## Supported Tools
-
-### Device Tools (19 tools — UI Automation)
-
-| Tool | Description |
-|------|-------------|
-| `getScreen` | Get current screen UI tree with element indices |
-| `click` | Tap on an element by index |
-| `longClick` | Long press on an element |
-| `setText` | Type text into an editable field |
-| `clearText` | Clear all text from an editable field |
-| `focus` | Focus on an element without clicking |
-| `scroll` | Scroll an element (up/down/left/right) |
-| `swipe` | Swipe from one point to another |
-| `drag` | Drag from one point to another |
-| `pressBack` | Press the back button |
-| `pressHome` | Press the home button |
-| `pressEnter` | Press Enter/Search key on keyboard |
-| `openRecentApps` | Open the recent apps switcher |
-| `openNotifications` | Pull down the notification shade |
-| `openQuickSettings` | Open quick settings panel |
-| `launchApp` | Launch any installed app by name |
-| `waitForUpdate` | Wait for the screen to settle after an action |
-| `taskComplete` | Signal that the task is done |
-| `taskFailed` | Signal that the task has failed |
-
-### Quick Action Tools (9 tools — Instant via Intents)
-
-| Tool | Description |
-|------|-------------|
-| `sendSms` | Send an SMS message |
-| `makeCall` | Start a phone call |
-| `openUrl` | Open a URL in the default browser |
-| `setAlarm` | Set an alarm (24-hour format) |
-| `playMusic` | Play music by search query |
-| `openSettings` | Open device settings (with optional section) |
-| `webSearch` | Open a web search in the browser |
-| `createCalendarEvent` | Create a calendar event |
-| `startNavigation` | Open navigation to an address |
 
 ---
 
@@ -208,102 +179,9 @@ ClawDroid supports 3 providers with multiple models each:
 
 ---
 
-## Project Structure
-
-```
-app/src/main/java/com/aiassistant/
-├── agent/                          # AI agent implementation
-│   ├── di/                         # Hilt module (AgentModule)
-│   ├── AndroidAgentFactory.kt      # Creates Koog agent per LLM provider
-│   ├── AgentConfig.kt              # Provider, model, temperature config
-│   ├── AgentEventProcessor.kt      # Processes agent lifecycle events
-│   ├── AgentExecutor.kt            # Runs agent tasks
-│   ├── AgentResult.kt              # Task result model
-│   ├── DeviceTools.kt              # 19 UI automation tools
-│   ├── QuickActionTools.kt         # 9 quick action tools
-│   └── SystemPrompts.kt            # System prompt for the agent
-├── data/
-│   ├── di/                         # Hilt modules (API keys, network, DB, Telegram)
-│   ├── local/
-│   │   ├── dao/                    # Room DAOs (TaskLog, TelegramConversation, TelegramMessage)
-│   │   ├── entity/                 # Room entities
-│   │   └── AppDatabase.kt         # Room database (v2)
-│   ├── mapper/                     # ScreenParser, UINodeFormatter
-│   ├── remote/
-│   │   ├── ApiKeyProvider.kt       # Encrypted API key storage
-│   │   └── telegram/               # Telegram API client (Ktor)
-│   └── repository/                 # Repository implementations
-├── domain/
-│   ├── model/                      # Domain models (UINode, ChatMessage, TaskLog, etc.)
-│   ├── repository/                 # Repository interfaces
-│   └── usecase/                    # Use cases (screen capture, task history, Telegram ops)
-├── framework/
-│   ├── accessibility/              # AccessibilityService, ActionPerformer
-│   ├── permission/                 # PermissionManager (suspendable permission requests)
-│   └── telegram/                   # TelegramBotService (foreground), NotificationManager
-└── presentation/
-    ├── chat/                       # In-app chat UI (ChatScreen, ChatViewModel)
-    ├── navigation/                 # Compose navigation
-    ├── settings/                   # Telegram settings screen
-    ├── theme/                      # Material 3 theme
-    ├── ClawdroidApp.kt             # Hilt Application class
-    └── MainActivity.kt             # Main activity
-```
-
----
-
-## Telegram Integration
-
-ClawDroid runs a **foreground service** (`TelegramBotService`) that continuously polls the Telegram Bot API for new messages. Key details:
-
-- **Long-polling** with exponential backoff (1s–30s)
-- **Foreground service** with persistent notification (survives process death via `START_STICKY`)
-- **Conversation history** stored in Room DB — the last 20 messages are included as context for each request
-- **Per-chat conversations** tracked with foreign key relationships
-
----
-
-## Roadmap
-
-- [x] Core AccessibilityService integration
-- [x] Koog agent framework integration
-- [x] Multi-provider LLM support (OpenAI, Anthropic, Google)
-- [x] UI automation (click, type, scroll, swipe, drag, long press, etc.)
-- [x] Telegram bot interface (foreground service + conversation history)
-- [x] Quick action intents (SMS, calls, alarms, music, navigation, calendar)
-- [x] Suspendable runtime permission manager
-- [ ] Web search API (currently browser-based, no results returned to agent)
-- [ ] NotificationListenerService (read/act on notifications)
-- [ ] WhatsApp integration
-- [ ] AI phone calls
-- [ ] On-device LLM
-
----
-
-## Security Considerations
-
-ClawDroid requires significant permissions to function. Please be aware:
-
-- **Accessibility Service** can see and interact with any app
-- **Phone/SMS** permissions enable call and text features
-- **API keys** are stored locally using EncryptedSharedPreferences
-
-**Recommendations:**
-- Use on a dedicated device, not your primary phone
-- Don't store sensitive credentials in apps ClawDroid accesses
-- Review the source code before use
-- Use a separate Telegram bot token
-
----
-
 ## Contributing
 
-Contributions are welcome! Areas where help is needed:
-
-- **Web search API** — Returning search results directly to the agent instead of opening a browser
-- **Notification listener** — Implementing NotificationListenerService for reading notifications
-- **UI automation** — Improving reliability of screen interactions
-- **Testing** — Writing tests for agent behaviors
+Contributions are welcome! You can open issues for suggest features/bugs or submit a Pull Request. 
 
 ---
 
