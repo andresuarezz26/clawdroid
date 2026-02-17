@@ -30,7 +30,7 @@ Think ChatGPT/Claude, but with hands.
 
 ## How to use it? 
 
-You can build the APK from source or download from Github releases. 
+You can build the APK from source or download from Github [releases](https://github.com/andresuarezz26/ClawDroid/releases). 
 
 ---
 
