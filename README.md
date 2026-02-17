@@ -1,50 +1,55 @@
-# ClawDroid - personal assistant living on your phone
+<div align="center">
 
-![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)
-![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=Telegram&logoColor=2CA5E0&labelColor=white&color=2CA5E0)
-![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-blue.svg)
+<img src="https://github.com/user-attachments/assets/c8d4f67d-1b94-440d-b128-6275ebfd34a7" width="150" height="150" alt="ClawDroid" />
 
+# ClawDroid
 
-**A standalone AI agent that runs entirely on Android. No server required.**
+[![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)](https://developer.android.com/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)](https://kotlinlang.org/)
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat&logo=telegram&logoColor=white)](https://telegram.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-ClawDroid is an open-source AI agent that runs on any Android device. Text it on Telegram, and it does things: sends messages, makes calls, sets alarms, opens web searches, and controls any app on your phone. No Mac Mini. No Gateway. No companion setup.
+**An AI agent that runs entirely on Android.
+Text it. It does things. No server required.**
+</div>
+
+ClawDroid is an open-source AI agent that runs on any Android device. 
+Text it on **Telegram** or use the built-in chat, and it actually does things:
+
+- 📱 **Control any app** — Post on Instagram, reply to WhatsApp, scroll through LinkedIn
+- ⏰ **Run scheduled tasks** — "Apply to 10 jobs on LinkedIn every morning"
+- 🔔 **React to notifications** — Auto-reply to emails, respond to DMs, triage messages
+- 📅 **Access your data** — "What's on my calendar next week?"
+
+Think ChatGPT, but with hands.
+
+<br/>
+
+🤖 **Live demo**: ClawDroid manages their own X account **[@clawdroidagent](https://x.com/clawdroidagent)** autonomously. It posts daily, replies to comments, and answers DMs. **[Go DM it →](https://x.com/clawdroidagent)**
+<br/>
+
+## How to use it? 
+
+You can build the APK from source or download from Github releases. 
 
 ---
 
 ## Why ClawDroid?
 
-[OpenClaw](https://github.com/openclaw/openclaw) proved that AI agents you can text from anywhere are the future. But OpenClaw requires a Mac/Linux/Windows machine running the Gateway 24/7. Their [Android app](https://github.com/openclaw/openclaw/tree/main/apps/android) is just a **companion node** — it connects to the Gateway for chat and camera, but can't run standalone.
+📱 **Access what desktop agents can't**
+Some apps only exist on mobile or don't have API integrations. Instagram, WhatsApp, TikTok, banking apps, dating apps, delivery apps — they block desktop automation or don't have web versions. ClawDroid runs on a real Android device, so it can control anything you can.
 
-**ClawDroid is different. The agent runs entirely on the Android device:**
+🚀 **Fast setup**
+Install the APK, add your API key, connect Telegram. Done in 5 minutes.
 
-Take any old Android phone, install ClawDroid, connect Telegram, put it in a drawer. You now have a personal AI agent you can text from anywhere — no other devices required.
+💰 **Cheap to run**  
+Works on any Android phone, old or new. Or use an emulator. No servers, no subscriptions.
 
----
+🔒 **Privacy-first**
+Conversations and history stay on-device. Only LLM API calls go out.
 
-## What Can It Do?
-
-### Quick Actions (via Android Intents)
-> *"Send a text to Mom saying I'll be late"*
-> *"Set an alarm for 7am tomorrow"*
-> *"Play some jazz on Spotify"*
-> *"Call the pizza place"*
-> *"Navigate to the airport"*
-
-These happen instantly — no screen automation needed.
-
-### Web Search (Browser-Based)
-> *"Search for the best Italian restaurants nearby"*
-> *"Look up the weather in Tokyo"*
-
-ClawDroid opens a web search in the browser. The agent can then read the screen to extract information if needed.
-
-### Control Any App (via AccessibilityService)
-> *"Open Settings and turn on Wi-Fi"*
-> *"Check my notifications"*
-> *"Post this to Instagram"*
-
-When there's no API, ClawDroid reads the screen and taps buttons like a human would.
+⚡ **No backend overhead**
+Direct to LLM API. Fewer hops, faster responses.
 
 ---
 
