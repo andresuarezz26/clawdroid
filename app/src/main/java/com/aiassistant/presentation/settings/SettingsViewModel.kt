@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.aiassistant.agent.LLMProvider
 import com.aiassistant.domain.preference.SharedPreferenceDataSource
 import com.aiassistant.domain.repository.telegram.ConversationModel
-import com.aiassistant.domain.repository.telegram.TelegramRepository
 import com.aiassistant.domain.usecase.messages.ObserveConversationUseCase
 import com.aiassistant.domain.usecase.telegram.ValidateTelegramTokenUseCase
 import com.aiassistant.framework.notification.NotificationListenerServiceState
@@ -27,7 +26,7 @@ import kotlinx.coroutines.withContext
 data class TelegramSettingsState(
   val token: String = "",
   val isTokenSet: Boolean = false,
-  val isBotRunning: Boolean = false,
+  val isTelegramBotRunning: Boolean = false,
   val isValidating: Boolean = false,
   val validationResult: ValidationResult? = null,
   val conversations: List<ConversationModel> = emptyList(),
@@ -102,7 +101,7 @@ class TelegramSettingsViewModel @Inject constructor(
       }
 
       serviceState.isRunning.collect { running ->
-        _state.update { it.copy(isBotRunning = running) }
+        _state.update { it.copy(isTelegramBotRunning = running) }
       }
     }
 
@@ -161,7 +160,7 @@ class TelegramSettingsViewModel @Inject constructor(
   }
 
   private fun clearToken() {
-    if (_state.value.isBotRunning) {
+    if (_state.value.isTelegramBotRunning) {
       TelegramBotService.stop(context)
     }
     preferences.clearToken()
@@ -169,7 +168,7 @@ class TelegramSettingsViewModel @Inject constructor(
       it.copy(
         isTokenSet = false,
         token = "",
-        isBotRunning = false,
+        isTelegramBotRunning = false,
         validationResult = null
       )
     }
@@ -198,16 +197,16 @@ class TelegramSettingsViewModel @Inject constructor(
   }
 
   private fun toggleBot() {
-    val isRunning = _state.value.isBotRunning
+    val isRunning = _state.value.isTelegramBotRunning
     if (isRunning) {
       TelegramBotService.stop(context)
-      _state.update { it.copy(isBotRunning = false) }
+      _state.update { it.copy(isTelegramBotRunning = false) }
     } else {
       if (!_state.value.isTokenSet) {
         _state.update { it.copy(validationResult = ValidationResult.Error("Please set a bot token first")) }
       } else {
         TelegramBotService.start(context)
-        _state.update { it.copy(isBotRunning = true) }
+        _state.update { it.copy(isTelegramBotRunning = true) }
       }
     }
   }

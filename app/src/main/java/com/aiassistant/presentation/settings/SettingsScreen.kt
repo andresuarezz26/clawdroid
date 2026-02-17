@@ -269,11 +269,11 @@ fun TelegramSettingsScreen(
                         ) {
                             Column {
                                 Text(
-                                    text = if (state.isBotRunning) "Bot is running" else "Bot is stopped",
+                                    text = if (state.isTelegramBotRunning) "Bot is running" else "Bot is stopped",
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Text(
-                                    text = if (state.isBotRunning) {
+                                    text = if (state.isTelegramBotRunning) {
                                         "Listening for messages..."
                                     } else {
                                         "Enable to start receiving messages"
@@ -284,7 +284,7 @@ fun TelegramSettingsScreen(
                             }
 
                             Switch(
-                                checked = state.isBotRunning,
+                                checked = state.isTelegramBotRunning,
                                 onCheckedChange = { viewModel.processIntent(TelegramSettingsIntent.ToggleBot) },
                                 enabled = state.isTokenSet
                             )
@@ -314,6 +314,7 @@ fun TelegramSettingsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
+                            /**
                             Box(
                                 modifier = Modifier
                                     .size(8.dp)
@@ -333,6 +334,7 @@ fun TelegramSettingsScreen(
                                 else
                                     MaterialTheme.colorScheme.error
                             )
+                            **/
                         }
 
                         if (!state.isNotificationListenerEnabled) {
@@ -369,7 +371,6 @@ fun TelegramSettingsScreen(
                                 Switch(
                                     checked = state.isNotificationForwardingEnabled,
                                     onCheckedChange = { viewModel.processIntent(TelegramSettingsIntent.ToggleNotificationForwarding) },
-                                    enabled = state.isBotRunning
                                 )
                             }
                         }
