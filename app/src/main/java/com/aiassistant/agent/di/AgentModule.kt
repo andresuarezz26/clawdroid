@@ -2,7 +2,7 @@ package com.aiassistant.agent.di
 
 import android.content.Context
 import com.aiassistant.agent.AndroidAgentFactory
-import com.aiassistant.agent.DeviceTools
+import com.aiassistant.agent.MobileAutomationTools
 import com.aiassistant.agent.NotificationTools
 import com.aiassistant.agent.QuickActionTools
 import com.aiassistant.agent.RecurringTaskTools
@@ -28,8 +28,8 @@ object AgentModule {
     fun provideDeviceTools(
         screenRepository: ScreenRepository,
         uiNodeFormatter: UINodeFormatter
-    ): DeviceTools {
-        return DeviceTools(screenRepository, uiNodeFormatter)
+    ): MobileAutomationTools {
+        return MobileAutomationTools(screenRepository, uiNodeFormatter)
     }
 
     @Provides
@@ -62,11 +62,11 @@ object AgentModule {
     @Provides
     @Singleton
     fun provideAndroidAgentFactory(
-        deviceTools: DeviceTools,
+        mobileAutomationTools: MobileAutomationTools,
         quickActionTools: QuickActionTools,
         notificationTools: NotificationTools,
         recurringTaskTools: RecurringTaskTools
     ): AndroidAgentFactory {
-        return AndroidAgentFactory(deviceTools, quickActionTools, notificationTools, recurringTaskTools)
+        return AndroidAgentFactory(mobileAutomationTools, quickActionTools, notificationTools, recurringTaskTools)
     }
 }

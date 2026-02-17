@@ -23,7 +23,7 @@ private const val TAG = "Agent"
 
 @Singleton
 class AndroidAgentFactory @Inject constructor(
-  private val deviceTools: DeviceTools,
+  private val mobileAutomationTools: MobileAutomationTools,
   private val quickActionTools: QuickActionTools,
   private val notificationTools: NotificationTools,
   private val recurringTaskTools: RecurringTaskTools
@@ -123,16 +123,16 @@ class AndroidAgentFactory @Inject constructor(
   private fun createAgentByType(type: AgentType): AgentStrategy {
     return when (type) {
       AgentType.GENERAL -> GeneralAgent(
-        deviceTools,
+        mobileAutomationTools,
         quickActionTools,
         notificationTools,
         recurringTaskTools
       )
 
-      AgentType.TASK_EXECUTOR -> TaskExecutorAgent(deviceTools, quickActionTools)
+      AgentType.TASK_EXECUTOR -> TaskExecutorAgent(mobileAutomationTools, quickActionTools)
       AgentType.NOTIFICATION_REACTOR ->
         NotificationReactor(
-          deviceTools,
+          mobileAutomationTools,
           quickActionTools,
           notificationTools,
         )

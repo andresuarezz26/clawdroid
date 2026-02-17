@@ -2,12 +2,12 @@ package com.aiassistant.agent.agent_strategy
 
 import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.reflect.tools
-import com.aiassistant.agent.DeviceTools
+import com.aiassistant.agent.MobileAutomationTools
 import com.aiassistant.agent.NotificationTools
 import com.aiassistant.agent.QuickActionTools
 
 class NotificationReactor(
-  private val deviceTools: DeviceTools,
+  private val mobileAutomationTools: MobileAutomationTools,
   private val quickActionTools: QuickActionTools,
   private val notificationTools: NotificationTools,
 ) : AgentStrategy {
@@ -17,7 +17,7 @@ class NotificationReactor(
 
   override fun toolRegistry() = ToolRegistry {
     tools(notificationTools)
-    tools(deviceTools)
+    tools(mobileAutomationTools)
     tools(quickActionTools)
   }
 }

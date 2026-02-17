@@ -88,7 +88,7 @@ fun TelegramSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Telegram Bot Settings") },
+                title = { Text("Settings") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -117,7 +117,7 @@ fun TelegramSettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "Bot Token",
+                            text = "Telegram Bot Token",
                             style = MaterialTheme.typography.titleMedium
                         )
 
@@ -131,7 +131,7 @@ fun TelegramSettingsScreen(
                             value = state.token,
                             onValueChange = { viewModel.processIntent(TelegramSettingsIntent.UpdateToken(it)) },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Bot Token") },
+                            label = { Text("Telegram Bot Token") },
                             placeholder = { Text("123456789:ABCdefGHIjklMNOpqrsTUVwxyz") },
                             singleLine = true,
                             visualTransformation = if (showToken) VisualTransformation.None else PasswordVisualTransformation(),
@@ -200,7 +200,7 @@ fun TelegramSettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "Bot Status",
+                            text = "Allow connection to Telegram",
                             style = MaterialTheme.typography.titleMedium
                         )
 

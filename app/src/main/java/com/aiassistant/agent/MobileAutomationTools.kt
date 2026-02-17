@@ -15,7 +15,7 @@ import javax.inject.Inject
 private const val TAG = "Agent"
 
 @LLMDescription("Android device automation tools")
-class DeviceTools @Inject constructor(
+class MobileAutomationTools @Inject constructor(
   private val screenRepository: ScreenRepository,
   private val uiNodeFormatter: UINodeFormatter
 ) : ToolSet {
