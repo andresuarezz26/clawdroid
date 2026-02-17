@@ -36,22 +36,31 @@ You can build the APK from source or download from Github releases.
 
 ## Why ClawDroid?
 
-📱 **Access what desktop agents can't**
-Some apps only exist on mobile or don't have API integrations. Instagram, WhatsApp, TikTok, banking apps, dating apps, delivery apps — they block desktop automation or don't have web versions. ClawDroid runs on a real Android device, so it can control anything you can.
+📱 **Access what desktop agents can't**  
+Some apps only exist on mobile or don't have APIs. Instagram, WhatsApp, TikTok, banking apps, delivery apps — they block desktop automation or don't have web versions. 
 
-🚀 **Fast setup**
+🤖 **Automate anything without code**  
+No scripting. No Selenium. No Appium. No Zapier. No Make. No n8n. Just tell the agent what you want in plain English, and it figures out how to do it. Automate any app without writing a single line of code.
+
+🚀 **Fast setup**  
 Install the APK, add your API key, connect Telegram. Done in 5 minutes.
 
 💰 **Cheap to run**  
 Works on any Android phone, old or new. Or use an emulator. No servers, no subscriptions.
 
-🔒 **Privacy-first**
+🔒 **Privacy-first**  
 Conversations and history stay on-device. Only LLM API calls go out.
 
-⚡ **No backend overhead**
+⚡ **No backend overhead**  
 Direct to LLM API. Fewer hops, faster responses.
 
 ---
+
+## How it looks?
+
+<img width="300" height="668" alt="screenshot1-clawdroid" src="https://github.com/user-attachments/assets/8e8d195e-6865-4873-8a17-84aab9ea60f3" />
+<img width="300" height="668" alt="screenshotnumber2clawdroid" src="https://github.com/user-attachments/assets/2f6fd3f0-3e21-4c71-a819-13b42a5fe6ec" />
+<img width="300" height="668" alt="screenshot3_model_selection" src="https://github.com/user-attachments/assets/8f3d0bd0-b176-443b-a1a0-f9e3a1309e3d" />
 
 ## Real Use Cases
 
