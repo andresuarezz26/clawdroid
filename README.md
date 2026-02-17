@@ -21,7 +21,7 @@ Text it on **Telegram** or use the built-in chat, and it actually does things:
 - 🔔 **React to notifications** — Auto-reply to emails, respond to DMs, triage messages
 - 📅 **Access your data** — "What's on my calendar next week?"
 
-Think ChatGPT, but with hands.
+Think ChatGPT/Claude, but with hands.
 
 <br/>
 
