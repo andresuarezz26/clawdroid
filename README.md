@@ -1,4 +1,10 @@
-# ClawDroid
+# ClawDroid - personal assistant living on your phone
+
+![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)
+![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?logo=Telegram&logoColor=2CA5E0&labelColor=white&color=2CA5E0)
+![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+
 
 **A standalone AI agent that runs entirely on Android. No server required.**
 
