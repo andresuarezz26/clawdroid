@@ -14,14 +14,7 @@ Text it. It does things. No server required.**
 </div>
 
 ClawDroid is an open-source AI agent that runs on any Android device. 
-Text it on **Telegram** or use the built-in chat, and it actually does things:
-
-- 📱 **Control most apps** — Post on Instagram, reply to WhatsApp, scroll through LinkedIn
-- ⏰ **Run scheduled tasks** — "Apply to 10 jobs on LinkedIn every morning"
-- 🔔 **React to notifications** — Auto-reply to emails, respond to DMs, triage messages
-- 📅 **Access your data** — "What's on my calendar next week?"
-
-Think ChatGPT/Claude, but with hands.
+Access it through Telegram or from the built-in chat. It doesn't require an external backend. It runs directly the LLMs and store the conversations in a local database. The agent can schedule recurrent tasks, react to notifications and manage all the apps installed on the phone.
 
 <br/>
 
@@ -30,7 +23,7 @@ Think ChatGPT/Claude, but with hands.
 
 ## How to use it? 
 
-**[📱 Download APK](https://github.com/andresuarezz26/ClawDroid/releases/latest/download/clawdroid-v1.0.0.apk)** · [View Releases](https://github.com/andresuarezz26/ClawDroid/releases)
+**[📱 Download APK](https://github.com/andresuarezz26/ClawDroid/releases/download/v1.0.0/app-release.apk)** · [View Releases](https://github.com/andresuarezz26/ClawDroid/releases)
 
 ---
 
